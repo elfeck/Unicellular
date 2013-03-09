@@ -9,14 +9,17 @@ import com.elfeck.ephemeral.drawable.EPHDrawable;
 import com.elfeck.ephemeral.drawable.EPHDrawablePolygon;
 import com.elfeck.ephemeral.drawable.EPHVertex;
 import com.elfeck.ephemeral.math.EPHMat4f;
+import com.elfeck.ephemeral.math.EPHVec2f;
 import com.elfeck.ephemeral.math.EPHVec4f;
 
 public class Background {
 
 	private EPHDrawablePolygon shape;
+	private EPHVec2f offset;
 	private EPHMat4f mvpMatrix;
 
 	protected Background() {
+		offset = new EPHVec2f(0, 0);
 		mvpMatrix = new EPHMat4f(new float[][] {
 												{ 1, 0, 0, 0 },
 												{ 0, 1, 0, 0 },
@@ -32,7 +35,7 @@ public class Background {
 		vertices[1] = new EPHVertex(1, new EPHVec4f[] { new EPHVec4f(1f, 1f, 0f, 1f), new EPHVec4f(0f, 0f, 0.25f, 1f) });
 		vertices[2] = new EPHVertex(2, new EPHVec4f[] { new EPHVec4f(1f, -1f, 0f, 1f), new EPHVec4f(0f, 0f, 0.25f, 1f) });
 		vertices[3] = new EPHVertex(3, new EPHVec4f[] { new EPHVec4f(-1f, -1f, 0f, 1f), new EPHVec4f(0f, 0f, 0.25f, 1f) });
-		shape = new EPHDrawablePolygon("background", vertices);
+		shape = new EPHDrawablePolygon("background", vertices, offset);
 		shape.addUniformMatf("mvp_matrix", mvpMatrix);
 	}
 

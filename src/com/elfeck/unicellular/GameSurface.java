@@ -19,14 +19,24 @@ public class GameSurface extends EPHSurface {
 		this.main = main;
 		panelBounds = new int[4];
 		updateBounds();
-		addEntity(camera = new GameCamera(this, panelBounds));
+		addEntity(camera = new GameCamera(panelBounds));
 		new Environment(this, panelBounds);
 	}
 
+	int timePassed = 0;
+	boolean once = true;
 	@Override
 	public void execLogic(long delta) {
 		super.execLogic(delta);
 		updateBounds();
+		if (timePassed > 1000 && once) {
+			timePassed = 0;
+			camera.requestScroll(new GameScrollJob(14, -14, 1000));
+			once = false;
+			timePassed += delta / 1e6;
+		} else {
+			timePassed += delta / 1e6;
+		}
 	}
 
 	private void updateBounds() {
@@ -35,6 +45,10 @@ public class GameSurface extends EPHSurface {
 		panelBounds[1] = frame;
 		panelBounds[2] = (int) Math.round(main.getWidth() * (2.0 / 3)) - frame * 2;
 		panelBounds[3] = main.getHeight() - frame * 2;
+	}
+
+	public void requestScroll(GameScrollJob scrollJob) {
+		camera.requestScroll(scrollJob);
 	}
 
 }

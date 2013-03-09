@@ -6,27 +6,27 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHEntity;
+import com.elfeck.ephemeral.math.EPHVec2f;
 
 
 public class GameCamera implements EPHEntity {
 
-	private float x, y;
 	private int[] panelBounds;
+	private EPHVec2f position, scrollOffset;
 	private GameScrollJob scrollJob;
-	private GameSurface gameSurface;
 
-	public GameCamera(GameSurface gameSurface, int[] panelBounds) {
-		this.gameSurface = gameSurface;
+	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
-		x = panelBounds[0];
-		y = panelBounds[1];
+		position = new EPHVec2f(panelBounds[0], panelBounds[1]);
+		scrollOffset = new EPHVec2f(0, 0);
 		scrollJob = null;
 	}
 
 	@Override
 	public void doLogic(long delta) {
 		if (scrollJob != null) {
-			scrollJob.scroll(delta);
+			scrollOffset = scrollJob.scroll(delta);
+			System.out.println(getBounds()[0] + " " + getBounds()[1]);
 			if (scrollJob.isFinished()) scrollJob = null;
 		}
 	}
@@ -37,12 +37,12 @@ public class GameCamera implements EPHEntity {
 	}
 
 	public float[] getBounds() {
-		return new float[] { x, y, panelBounds[2], panelBounds[3] };
+		return new float[] { position.getX() + scrollOffset.getX(), position.getY() + scrollOffset.getX(), panelBounds[2], panelBounds[3] };
 	}
 
 	public void requestScroll(GameScrollJob scrollJob) {
 		this.scrollJob = scrollJob;
-		scrollJob.setSource(x, y);
+		scrollJob.setSource(position.getX(), position.getY());
 	}
 
 }

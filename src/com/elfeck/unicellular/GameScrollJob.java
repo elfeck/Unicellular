@@ -51,14 +51,14 @@ public class GameScrollJob {
 		timePassed = 0;
 	}
 
-	protected float[] scroll(long delta) {
+	protected EPHVec2f scroll(long delta) {
 		if (!finished) {
 			timePassed += delta / 1e6;
-			EPHVec2f currentDist = dist.copy().toLength(Math.min(timePassed / totalTime, 1));
+			EPHVec2f currentDist = dist.copy().toLength(dist.length() * Math.min(timePassed / totalTime, 1));
 			if (timePassed >= totalTime) finished = true;
-			return currentDist.toArray();
+			return currentDist;
 		} else {
-			return new float[] { 0, 0 };
+			return new EPHVec2f(0, 0);
 		}
 	}
 
