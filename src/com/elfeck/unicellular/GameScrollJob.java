@@ -13,7 +13,7 @@ public class GameScrollJob {
 	private boolean finished;
 	private int timePassed;
 	private float speed, totalTime;
-	private EPHVec2f dest, dist;
+	private EPHVec2f dest, dist; // center
 
 	public GameScrollJob(EPHVec2f dest, float speed) {
 		this.dest = dest;

@@ -6,18 +6,29 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHEntity;
+import com.elfeck.ephemeral.math.EPHMat4f;
 import com.elfeck.ephemeral.math.EPHVec2f;
 
 
 public class GameCamera implements EPHEntity {
 
-	private int[] panelBounds;
-	private EPHVec2f position, scrollOffset;
+	private int[] panelBounds; // ingame space
+	private float scale;
+	private EPHMat4f vpMatrix;
+	private EPHVec2f position; // center
+	private EPHVec2f scrollOffset;
 	private GameScrollJob scrollJob;
 
 	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
-		position = new EPHVec2f(panelBounds[0], panelBounds[1]);
+		scale = 1.0f;
+		vpMatrix = new EPHMat4f(new float[][] {
+												{ scale / panelBounds[2], 0, 0, 0 },
+												{ 0, scale / panelBounds[3], 0, 0 },
+												{ 0, 0, 1, 0 },
+												{ 0, 0, 0, 1 }
+		});
+		position = new EPHVec2f(0, 0);
 		scrollOffset = new EPHVec2f(0, 0);
 		scrollJob = null;
 	}
@@ -25,10 +36,13 @@ public class GameCamera implements EPHEntity {
 	@Override
 	public void doLogic(long delta) {
 		if (scrollJob != null) {
-			scrollOffset = scrollJob.scroll(delta);
-			System.out.println(getBounds()[0] + " " + getBounds()[1]);
+			position.subVec2f(scrollOffset);
+			position.addVec2f(scrollOffset = scrollJob.scroll(delta));
+
 			if (scrollJob.isFinished()) scrollJob = null;
 		}
+		vpMatrix.copyToCL(0, 0, scale / panelBounds[2]);
+		vpMatrix.copyToCL(1, 1, scale / panelBounds[3]);
 	}
 
 	@Override
@@ -36,13 +50,32 @@ public class GameCamera implements EPHEntity {
 		return false;
 	}
 
-	public float[] getBounds() {
-		return new float[] { position.getX() + scrollOffset.getX(), position.getY() + scrollOffset.getX(), panelBounds[2], panelBounds[3] };
+	public float[] getWindowSpaceBounds() {
+		return new float[] { position.getX() - panelBounds[2] / 2.0f,
+							position.getY() + panelBounds[3] / 2.0f,
+							panelBounds[2], panelBounds[3]
+		};
+
+	}
+
+	public float[] getModelSpaceBounds() {
+		return new float[] { position.getX() - panelBounds[2] / 2.0f,
+							position.getY() - panelBounds[3] / 2.0f,
+							panelBounds[2], panelBounds[3]
+		};
 	}
 
 	public void requestScroll(GameScrollJob scrollJob) {
 		this.scrollJob = scrollJob;
 		scrollJob.setSource(position.getX(), position.getY());
+	}
+
+	public EPHMat4f getVpMatrix() {
+		return vpMatrix;
+	}
+
+	public EPHVec2f getCameraOffset() {
+		return position;
 	}
 
 }

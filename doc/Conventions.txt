@@ -1,0 +1,7 @@
+delta  								[ns]
+timer, timePassed, ...				[ms]
+x, y, widht, hight, dx, dy, ... 	[pixel]
+speed								[pixel / ms]
+
+gamePanel: all coordinates			[pixel]
+rect bounds							min{x}, min{y}

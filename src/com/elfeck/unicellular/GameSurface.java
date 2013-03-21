@@ -11,44 +11,46 @@ import com.elfeck.unicellular.environment.Environment;
 
 public class GameSurface extends EPHSurface {
 
-	private int[] panelBounds;
+	private int[] windowSpacePanelBounds; // window space
+	private int[] limitBounds; // ingame space
 	private GameCamera camera;
 	private Unicellular main;
 
 	public GameSurface(Unicellular main) {
 		this.main = main;
-		panelBounds = new int[4];
+		windowSpacePanelBounds = new int[4];
+		limitBounds = new int[] { -500, -500, 1000, 1000 };
 		updateBounds();
-		addEntity(camera = new GameCamera(panelBounds));
-		new Environment(this, panelBounds);
+		addEntity(camera = new GameCamera(windowSpacePanelBounds));
+		new Environment(this);
 	}
 
-	int timePassed = 0;
-	boolean once = true;
 	@Override
 	public void execLogic(long delta) {
-		super.execLogic(delta);
 		updateBounds();
-		if (timePassed > 1000 && once) {
-			timePassed = 0;
-			camera.requestScroll(new GameScrollJob(14, -14, 1000));
-			once = false;
-			timePassed += delta / 1e6;
-		} else {
-			timePassed += delta / 1e6;
-		}
+		super.execLogic(delta);
 	}
 
 	private void updateBounds() {
 		int frame = (int) (main.getHeight() / 50.0);
-		panelBounds[0] = frame;
-		panelBounds[1] = frame;
-		panelBounds[2] = (int) Math.round(main.getWidth() * (2.0 / 3)) - frame * 2;
-		panelBounds[3] = main.getHeight() - frame * 2;
+		int width = (int) Math.round(main.getWidth() * (2.0 / 3)) - frame * 2;
+		int height = main.getHeight() - frame * 2;
+		windowSpacePanelBounds[0] = frame;
+		windowSpacePanelBounds[1] = frame;
+		windowSpacePanelBounds[2] = width;
+		windowSpacePanelBounds[3] = height;
 	}
 
-	public void requestScroll(GameScrollJob scrollJob) {
-		camera.requestScroll(scrollJob);
+	public GameCamera getCamera() {
+		return camera;
+	}
+
+	public int[] getWindowSpacePanelBounds() {
+		return windowSpacePanelBounds;
+	}
+
+	public int[] getLimitBounds() {
+		return limitBounds;
 	}
 
 }

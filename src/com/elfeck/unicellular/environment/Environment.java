@@ -8,19 +8,20 @@ package com.elfeck.unicellular.environment;
 import com.elfeck.ephemeral.drawable.EPHDrawableModel;
 import com.elfeck.unicellular.GameSurface;
 
+
 public class Environment {
 
 	private EPHDrawableModel model;
 	private Background background;
 
-	public Environment(GameSurface surface, int[] gamePanelBounds) {
+	public Environment(GameSurface surface) {
 		model = new EPHDrawableModel();
-		background = new Background();
+		background = new Background(surface);
 		model.addAttribute(4, "vertex_position");
 		model.addAttribute(4, "vertex_color");
 		model.addDrawable(background.getShape());
 		model.create();
-		model.setViewPort(gamePanelBounds);
+		model.setViewPort(surface.getWindowSpacePanelBounds());
 		model.addToSurface(surface);
 	}
 
