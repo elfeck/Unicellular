@@ -14,6 +14,6 @@ uniform mat4 mvp_matrix;
 out vec4 fragment_color;
 
 void main() {
-	gl_Position = (vertex_position + camera_offset) * mvp_matrix;
+	gl_Position = (vertex_position - camera_offset) * mvp_matrix;
 	fragment_color = vertex_color;
 }

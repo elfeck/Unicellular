@@ -6,11 +6,13 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHemeral;
+import com.elfeck.ephemeral.glContext.EPHInput;
 
 
 public class Unicellular {
 
 	private EPHemeral core;
+	@SuppressWarnings("unused")
 	private GameSurface gameSurface;
 
 	public Unicellular() {
@@ -30,6 +32,10 @@ public class Unicellular {
 
 	public boolean wasResized() {
 		return core.wasResized();
+	}
+
+	public EPHInput getInput() {
+		return core.getInput();
 	}
 
 	public static void main(String[] args) {

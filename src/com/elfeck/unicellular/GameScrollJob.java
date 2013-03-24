@@ -67,6 +67,7 @@ public class GameScrollJob {
 		if (dist == null) dist = new EPHVec2f(x, y).negate().addVec2f(dest);
 		if (speed == -1) speed = dist.length() / totalTime;
 		if (totalTime == -1) totalTime = dist.length() / speed;
+		if (totalTime <= 0) finished = true;
 	}
 
 	public boolean isFinished() {

@@ -16,13 +16,13 @@ public class Environment {
 
 	public Environment(GameSurface surface) {
 		model = new EPHDrawableModel();
-		background = new Background(surface);
 		model.addAttribute(4, "vertex_position");
 		model.addAttribute(4, "vertex_color");
-		model.addDrawable(background.getShape());
 		model.create();
 		model.setViewPort(surface.getWindowSpacePanelBounds());
 		model.addToSurface(surface);
+		background = new Background(model, surface);
+		new Background(model, surface);
 	}
 
 }

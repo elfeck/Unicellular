@@ -38,8 +38,11 @@ public class GameCamera implements EPHEntity {
 		if (scrollJob != null) {
 			position.subVec2f(scrollOffset);
 			position.addVec2f(scrollOffset = scrollJob.scroll(delta));
-
-			if (scrollJob.isFinished()) scrollJob = null;
+			if (scrollJob.isFinished()) {
+				scrollJob = null;
+				scrollOffset.setX(0f);
+				scrollOffset.setY(0f);
+			}
 		}
 		vpMatrix.copyToCL(0, 0, scale / panelBounds[2]);
 		vpMatrix.copyToCL(1, 1, scale / panelBounds[3]);
@@ -55,7 +58,6 @@ public class GameCamera implements EPHEntity {
 							position.getY() + panelBounds[3] / 2.0f,
 							panelBounds[2], panelBounds[3]
 		};
-
 	}
 
 	public float[] getModelSpaceBounds() {
@@ -74,7 +76,7 @@ public class GameCamera implements EPHEntity {
 		return vpMatrix;
 	}
 
-	public EPHVec2f getCameraOffset() {
+	public EPHVec2f getCameraPosition() {
 		return position;
 	}
 

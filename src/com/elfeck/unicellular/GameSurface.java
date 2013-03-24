@@ -6,28 +6,30 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHSurface;
+import com.elfeck.ephemeral.math.EPHVec2f;
 import com.elfeck.unicellular.environment.Environment;
 
 
 public class GameSurface extends EPHSurface {
 
-	private int[] windowSpacePanelBounds; // window space
+	private int[] panelBounds; // window space
 	private int[] limitBounds; // ingame space
 	private GameCamera camera;
 	private Unicellular main;
 
 	public GameSurface(Unicellular main) {
 		this.main = main;
-		windowSpacePanelBounds = new int[4];
-		limitBounds = new int[] { -500, -500, 1000, 1000 };
+		panelBounds = new int[4];
+		limitBounds = new int[] { -2000, -2000, 4000, 4000 };
 		updateBounds();
-		addEntity(camera = new GameCamera(windowSpacePanelBounds));
+		addEntity(camera = new GameCamera(panelBounds));
 		new Environment(this);
 	}
 
 	@Override
 	public void execLogic(long delta) {
 		updateBounds();
+		handleInput();
 		super.execLogic(delta);
 	}
 
@@ -35,10 +37,27 @@ public class GameSurface extends EPHSurface {
 		int frame = (int) (main.getHeight() / 50.0);
 		int width = (int) Math.round(main.getWidth() * (2.0 / 3)) - frame * 2;
 		int height = main.getHeight() - frame * 2;
-		windowSpacePanelBounds[0] = frame;
-		windowSpacePanelBounds[1] = frame;
-		windowSpacePanelBounds[2] = width;
-		windowSpacePanelBounds[3] = height;
+		panelBounds[0] = frame;
+		panelBounds[1] = frame;
+		panelBounds[2] = width;
+		panelBounds[3] = height;
+	}
+
+	private void handleInput() {
+		if (withinBounds(main.getInput().getMx(), main.getInput().getMy())) {
+			if (main.getInput().isMleftReleased()) {
+				EPHVec2f pos = toModelSpace(main.getInput().getMx(), main.getInput().getMy()).mulScalar(2f).addVec2f(camera.getCameraPosition());
+				camera.requestScroll(new GameScrollJob(pos, 2f));
+			}
+		}
+	}
+
+	private boolean withinBounds(int mx, int my) {
+		return mx >= panelBounds[0] && mx < panelBounds[0] + panelBounds[2] && my >= panelBounds[1] && my < panelBounds[1] + panelBounds[3];
+	}
+
+	private EPHVec2f toModelSpace(int x, int y) {
+		return new EPHVec2f(x - panelBounds[0] - panelBounds[2] / 2.0f, y - panelBounds[1] - panelBounds[3] / 2.0f);
 	}
 
 	public GameCamera getCamera() {
@@ -46,7 +65,7 @@ public class GameSurface extends EPHSurface {
 	}
 
 	public int[] getWindowSpacePanelBounds() {
-		return windowSpacePanelBounds;
+		return panelBounds;
 	}
 
 	public int[] getLimitBounds() {
