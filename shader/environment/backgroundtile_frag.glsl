@@ -5,8 +5,9 @@
 
  #version 140
  
- in vec4 fragment_color;
+ in vec4 frag_color;
+ in vec4 frag_colorcode; 
  
  void main() {
- 	gl_FragColor = fragment_color;
- }
+ 	gl_FragColor = frag_color + frag_colorcode;
+}

@@ -21,10 +21,10 @@ public class GameCamera implements EPHEntity {
 
 	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
-		scale = 1.0f;
+		scale = 1f;
 		vpMatrix = new EPHMat4f(new float[][] {
-												{ scale / panelBounds[2], 0, 0, 0 },
-												{ 0, scale / panelBounds[3], 0, 0 },
+												{ scale * ((float) panelBounds[3]) / panelBounds[2], 0, 0, 0 },
+												{ 0, scale * ((float) panelBounds[2]) / panelBounds[3], 0, 0 },
 												{ 0, 0, 1, 0 },
 												{ 0, 0, 0, 1 }
 		});
@@ -44,8 +44,10 @@ public class GameCamera implements EPHEntity {
 				scrollOffset.setY(0f);
 			}
 		}
-		vpMatrix.copyToCL(0, 0, scale / panelBounds[2]);
-		vpMatrix.copyToCL(1, 1, scale / panelBounds[3]);
+		// 2.0f to the scale is necessary b/c the vpMatrix translates window ->
+		// [0; 1] and not window -> [-1; -1] aka half the width and height
+		vpMatrix.copyToCL(0, 0, scale * 2.0f / panelBounds[2]);
+		vpMatrix.copyToCL(1, 1, scale * 2.0f / panelBounds[3]);
 	}
 
 	@Override
@@ -69,6 +71,8 @@ public class GameCamera implements EPHEntity {
 
 	public void requestScroll(GameScrollJob scrollJob) {
 		this.scrollJob = scrollJob;
+		scrollOffset.setX(0);
+		scrollOffset.setY(0);
 		scrollJob.setSource(position.getX(), position.getY());
 	}
 
@@ -78,6 +82,10 @@ public class GameCamera implements EPHEntity {
 
 	public EPHVec2f getCameraPosition() {
 		return position;
+	}
+
+	public float getScale() {
+		return scale;
 	}
 
 }

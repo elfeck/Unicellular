@@ -5,55 +5,85 @@
 
 package com.elfeck.unicellular.environment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.elfeck.ephemeral.drawable.EPHDrawableModel;
-import com.elfeck.ephemeral.drawable.EPHDrawablePolygon;
 import com.elfeck.ephemeral.drawable.EPHVertex;
-import com.elfeck.ephemeral.math.EPHVec2f;
+import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.math.EPHVec4f;
 import com.elfeck.unicellular.GameSurface;
 
 
 public class Background {
 
+	private int tileSize;
+	private EPHVertex[] shape;
 	private EPHDrawableModel model;
+	private EPHVaoEntry vaoRef;
 	private GameSurface surface;
-	private EPHDrawablePolygon shape;
-	private EPHVec2f offset;
+	private List<BackgroundQuad> tiles;
+	private EPHVec4f color;
 
-	protected Background(EPHDrawableModel model, GameSurface surface) {
-		this.model = model;
+	protected Background(GameSurface surface) {
 		this.surface = surface;
-		offset = new EPHVec2f(0, 0);
-		initShape();
+		tileSize = 100;
+		model = new EPHDrawableModel();
+		tiles = new ArrayList<BackgroundQuad>();
+		color = new EPHVec4f(0.05f, 0.45f, 0.3f, 1.0f);
+		initModel();
+		initTiles();
 	}
 
-	static boolean once = true;
+	private void initModel() {
+		model.addAttribute(4, "vertex_position");
+		model.addAttribute(4, "vertex_color");
+		model.create();
+		model.setViewPort(surface.getWindowSpacePanelBounds());
+		model.addToSurface(surface);
+	}
 
-	private void initShape() {
-		if (once) {
-			EPHVertex[] vertices = new EPHVertex[4];
-			// int[] bounds = surface.getLimitBounds();
-			int[] bounds = new int[] { -2, -2, 4, 4 };
-			vertices[0] = new EPHVertex(0, new EPHVec4f[] { new EPHVec4f(bounds[0], bounds[1] + bounds[3], 0.1f, 1f), new EPHVec4f(1f, 1f, 1f, 1f) });
-			vertices[1] = new EPHVertex(1, new EPHVec4f[] { new EPHVec4f(bounds[0] + bounds[2], bounds[1] + bounds[3], 0.1f, 1f), new EPHVec4f(1f, 1f, 1f, 1f) });
-			vertices[2] = new EPHVertex(2, new EPHVec4f[] { new EPHVec4f(bounds[0] + bounds[2], bounds[1], 0.1f, 1f), new EPHVec4f(1f, 1f, 1f, 1f) });
-			vertices[3] = new EPHVertex(3, new EPHVec4f[] { new EPHVec4f(bounds[0], bounds[1], 0.1f, 1f), new EPHVec4f(1f, 1f, 1f, 1f) });
-			shape = new EPHDrawablePolygon(model, "background", vertices, offset);
-			shape.addUniformVecf("camera_offset", new EPHVec2f(0, 0));
-			once = false;
-		} else {
-			EPHVertex[] vertices = new EPHVertex[4];
-			int[] bounds = surface.getLimitBounds();
-			// int[] bounds = new int[] { -50, -50, 100, 100 };
-			vertices[0] = new EPHVertex(0, new EPHVec4f[] { new EPHVec4f(bounds[0], bounds[1] + bounds[3], 0f, 1f), new EPHVec4f(1f, 0f, 0.25f, 1f) });
-			vertices[1] = new EPHVertex(1, new EPHVec4f[] { new EPHVec4f(bounds[0] + bounds[2], bounds[1] + bounds[3], 0f, 1f), new EPHVec4f(0.25f, 0f, 1f, 1f) });
-			vertices[2] = new EPHVertex(2, new EPHVec4f[] { new EPHVec4f(bounds[0] + bounds[2], bounds[1], 0f, 1f), new EPHVec4f(0f, 0.25f, 1f, 1f) });
-			vertices[3] = new EPHVertex(3, new EPHVec4f[] { new EPHVec4f(bounds[0], bounds[1], 0f, 1f), new EPHVec4f(1f, 1f, 0.25f, 1f) });
-			shape = new EPHDrawablePolygon(model, "background", vertices, offset);
-			shape.addUniformVecf("camera_offset", surface.getCamera().getCameraPosition());
+	private void initTiles() {
+		int[] bounds = surface.getLimitBounds();
+		float offs;
+		for (int i = bounds[0]; i < bounds[0] + bounds[2]; i += tileSize) {
+			for (int j = bounds[1]; j < bounds[1] + bounds[3]; j += tileSize) {
+				do {
+					offs = (float) Math.random();
+				} while (offs < 0.0f || offs > 0.0150f);
+				EPHVec4f currentColor = new EPHVec4f(offs, offs, offs, 0);
+				tiles.add(new BackgroundQuad(i, j, tileSize, tileSize, 0.1f, currentColor));
+			}
 		}
-		shape.addUniformMatf("mvp_matrix", surface.getCamera().getVpMatrix());
-		shape.addDataToVao();
+		vaoRef = model.addToVao(assembleVertexValues(), assebleIndices(), "backgroundtile");
+		vaoRef.registerVecUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
+		vaoRef.registerVecUniformEntry("color", color);
+		vaoRef.registerMatUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
+	}
+
+	private List<Float> assembleVertexValues() {
+		List<Float> vertexValues = new ArrayList<Float>();
+		for (BackgroundQuad quad : tiles) {
+			quad.fetchVertexData(vertexValues);
+		}
+		return vertexValues;
+	}
+
+	private List<Integer> assebleIndices() {
+		List<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i < tiles.size(); i++) {
+			indices.add(0 + i * 4);
+			indices.add(1 + i * 4);
+			indices.add(2 + i * 4);
+			indices.add(2 + i * 4);
+			indices.add(3 + i * 4);
+			indices.add(0 + i * 4);
+		}
+		return indices;
+	}
+
+	protected void delegateLogic(long delta) {
+
 	}
 
 }

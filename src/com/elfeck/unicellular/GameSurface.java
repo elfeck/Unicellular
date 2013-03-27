@@ -20,10 +20,10 @@ public class GameSurface extends EPHSurface {
 	public GameSurface(Unicellular main) {
 		this.main = main;
 		panelBounds = new int[4];
-		limitBounds = new int[] { -2000, -2000, 4000, 4000 };
+		limitBounds = new int[] { -2500, -2500, 5000, 5000 };
 		updateBounds();
 		addEntity(camera = new GameCamera(panelBounds));
-		new Environment(this);
+		addEntity(new Environment(this));
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class GameSurface extends EPHSurface {
 	private void handleInput() {
 		if (withinBounds(main.getInput().getMx(), main.getInput().getMy())) {
 			if (main.getInput().isMleftReleased()) {
-				EPHVec2f pos = toModelSpace(main.getInput().getMx(), main.getInput().getMy()).mulScalar(2f).addVec2f(camera.getCameraPosition());
+				EPHVec2f pos = toModelSpace(main.getInput().getMx(), main.getInput().getMy()).addVec2f(camera.getCameraPosition());
 				camera.requestScroll(new GameScrollJob(pos, 2f));
 			}
 		}
@@ -57,7 +57,8 @@ public class GameSurface extends EPHSurface {
 	}
 
 	private EPHVec2f toModelSpace(int x, int y) {
-		return new EPHVec2f(x - panelBounds[0] - panelBounds[2] / 2.0f, y - panelBounds[1] - panelBounds[3] / 2.0f);
+		return new EPHVec2f((x - panelBounds[0] - panelBounds[2] / 2.0f) * (1 / camera.getScale()),
+				(y - panelBounds[1] - panelBounds[3] / 2.0f) * (1 / camera.getScale()));
 	}
 
 	public GameCamera getCamera() {

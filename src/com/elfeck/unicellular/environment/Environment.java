@@ -5,24 +5,26 @@
 
 package com.elfeck.unicellular.environment;
 
-import com.elfeck.ephemeral.drawable.EPHDrawableModel;
+import com.elfeck.ephemeral.EPHEntity;
 import com.elfeck.unicellular.GameSurface;
 
 
-public class Environment {
+public class Environment implements EPHEntity {
 
-	private EPHDrawableModel model;
 	private Background background;
 
 	public Environment(GameSurface surface) {
-		model = new EPHDrawableModel();
-		model.addAttribute(4, "vertex_position");
-		model.addAttribute(4, "vertex_color");
-		model.create();
-		model.setViewPort(surface.getWindowSpacePanelBounds());
-		model.addToSurface(surface);
-		background = new Background(model, surface);
-		new Background(model, surface);
+		background = new Background(surface);
+	}
+
+	@Override
+	public void doLogic(long delta) {
+		background.delegateLogic(delta);
+	}
+
+	@Override
+	public boolean isDead() {
+		return false;
 	}
 
 }
