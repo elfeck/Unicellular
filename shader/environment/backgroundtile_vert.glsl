@@ -6,7 +6,7 @@
 #version 140
 
 in vec4 vertex_position;
-in vec4 vertex_colorcode;
+in vec4 vertex_color;
 
 uniform vec2 camera_offset;
 uniform vec4 color;
@@ -18,5 +18,5 @@ out vec4 frag_colorcode;
 void main() {
 	gl_Position = vec4(vertex_position.xy - camera_offset.xy, vertex_position.zw) * mvp_matrix;
 	frag_color = color;
-	frag_colorcode = vertex_colorcode;
+	frag_colorcode = vertex_color;
 }

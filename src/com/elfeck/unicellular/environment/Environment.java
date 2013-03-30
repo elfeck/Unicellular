@@ -12,14 +12,17 @@ import com.elfeck.unicellular.GameSurface;
 public class Environment implements EPHEntity {
 
 	private Background background;
+	private Substance substance;
 
 	public Environment(GameSurface surface) {
 		background = new Background(surface);
+		substance = new Substance(surface);
 	}
 
 	@Override
 	public void doLogic(long delta) {
 		background.delegateLogic(delta);
+		substance.delegateLogic(delta);
 	}
 
 	@Override

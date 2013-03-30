@@ -8,31 +8,32 @@ package com.elfeck.unicellular.environment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elfeck.ephemeral.drawable.EPHDrawableModel;
-import com.elfeck.ephemeral.drawable.EPHVertex;
+import com.elfeck.ephemeral.drawable.EPHModel;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.math.EPHVec4f;
 import com.elfeck.unicellular.GameSurface;
+import com.elfeck.unicellular.Util;
 
 
 public class Background {
 
 	private int tileSize;
-	private EPHVertex[] shape;
-	private EPHDrawableModel model;
+	private float layer;
+	private EPHModel model;
 	private EPHVaoEntry vaoRef;
 	private GameSurface surface;
-	private List<BackgroundQuad> tiles;
+	private List<BackgroundQuad> quads;
 	private EPHVec4f color;
 
 	protected Background(GameSurface surface) {
 		this.surface = surface;
 		tileSize = 100;
-		model = new EPHDrawableModel();
-		tiles = new ArrayList<BackgroundQuad>();
+		layer = 0.1f;
+		model = new EPHModel();
+		quads = new ArrayList<BackgroundQuad>();
 		color = new EPHVec4f(0.05f, 0.45f, 0.3f, 1.0f);
 		initModel();
-		initTiles();
+		initQuads();
 	}
 
 	private void initModel() {
@@ -43,16 +44,14 @@ public class Background {
 		model.addToSurface(surface);
 	}
 
-	private void initTiles() {
+	private void initQuads() {
 		int[] bounds = surface.getLimitBounds();
 		float offs;
 		for (int i = bounds[0]; i < bounds[0] + bounds[2]; i += tileSize) {
 			for (int j = bounds[1]; j < bounds[1] + bounds[3]; j += tileSize) {
-				do {
-					offs = (float) Math.random();
-				} while (offs < 0.0f || offs > 0.0150f);
+				offs = Util.randomFloatInInterval(0, 0.02f);
 				EPHVec4f currentColor = new EPHVec4f(offs, offs, offs, 0);
-				tiles.add(new BackgroundQuad(i, j, tileSize, tileSize, 0.1f, currentColor));
+				quads.add(new BackgroundQuad(i, j, tileSize, tileSize, layer, currentColor));
 			}
 		}
 		vaoRef = model.addToVao(assembleVertexValues(), assebleIndices(), "backgroundtile");
@@ -63,7 +62,7 @@ public class Background {
 
 	private List<Float> assembleVertexValues() {
 		List<Float> vertexValues = new ArrayList<Float>();
-		for (BackgroundQuad quad : tiles) {
+		for (BackgroundQuad quad : quads) {
 			quad.fetchVertexData(vertexValues);
 		}
 		return vertexValues;
@@ -71,7 +70,7 @@ public class Background {
 
 	private List<Integer> assebleIndices() {
 		List<Integer> indices = new ArrayList<Integer>();
-		for (int i = 0; i < tiles.size(); i++) {
+		for (int i = 0; i < quads.size(); i++) {
 			indices.add(0 + i * 4);
 			indices.add(1 + i * 4);
 			indices.add(2 + i * 4);
@@ -84,6 +83,10 @@ public class Background {
 
 	protected void delegateLogic(long delta) {
 
+	}
+
+	public float getLayer() {
+		return layer;
 	}
 
 }

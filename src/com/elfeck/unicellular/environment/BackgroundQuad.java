@@ -16,14 +16,14 @@ public class BackgroundQuad {
 	private int width, height;
 	private float depth;
 	private EPHVec2f position;
-	private EPHVec4f colorCode;
+	private EPHVec4f color;
 
-	public BackgroundQuad(float x, float y, int width, int height, float depth, EPHVec4f colorCode) {
+	public BackgroundQuad(float x, float y, int width, int height, float depth, EPHVec4f color) {
 		this.width = width;
 		this.height = height;
 		position = new EPHVec2f(x, y);
 		this.depth = depth;
-		this.colorCode = colorCode;
+		this.color = color;
 	}
 
 	public void fetchVertexData(List<Float> vertexValues) {
@@ -46,7 +46,7 @@ public class BackgroundQuad {
 			}
 			vertexValues.add(depth);
 			vertexValues.add(1f);
-			colorCode.fetchData(vertexValues);
+			color.fetchData(vertexValues);
 		}
 	}
 }
