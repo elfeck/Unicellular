@@ -13,7 +13,6 @@ import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.unicellular.GameSurface;
 
 
-// shit
 public class Substance {
 
 	private float layer;
