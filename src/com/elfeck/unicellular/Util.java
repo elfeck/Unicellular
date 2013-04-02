@@ -23,4 +23,8 @@ public class Util {
 		return source[(int) (Math.random() * source.length)];
 	}
 
+	public static boolean testOnProbability(float probability) {
+		return Math.random() < probability;
+	}
+
 }

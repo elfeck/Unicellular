@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.elfeck.ephemeral.drawable.EPHModel;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 import com.elfeck.ephemeral.math.EPHVec4f;
 import com.elfeck.unicellular.GameSurface;
 import com.elfeck.unicellular.Util;
@@ -23,7 +24,7 @@ public class Background {
 	private EPHVaoEntry vaoRef;
 	private GameSurface surface;
 	private List<BackgroundQuad> quads;
-	private EPHVec4f color;
+	private EPHUniformVec4f color;
 
 	protected Background(GameSurface surface) {
 		this.surface = surface;
@@ -31,7 +32,7 @@ public class Background {
 		layer = 0.1f;
 		model = new EPHModel();
 		quads = new ArrayList<BackgroundQuad>();
-		color = new EPHVec4f(0.05f, 0.45f, 0.3f, 1.0f);
+		color = new EPHUniformVec4f(0.1f, 0.45f, 0.25f, 1.0f);
 		initModel();
 		initQuads();
 	}
@@ -49,15 +50,15 @@ public class Background {
 		float offs;
 		for (int i = bounds[0]; i < bounds[0] + bounds[2]; i += tileSize) {
 			for (int j = bounds[1]; j < bounds[1] + bounds[3]; j += tileSize) {
-				offs = Util.randomFloatInInterval(0, 0.02f);
+				offs = Util.randomFloatInInterval(0, 0.02f) + (Util.testOnProbability(0.5f) ? 0.001f : 0);
 				EPHVec4f currentColor = new EPHVec4f(offs, offs, offs, 0);
 				quads.add(new BackgroundQuad(i, j, tileSize, tileSize, layer, currentColor));
 			}
 		}
 		vaoRef = model.addToVao(assembleVertexValues(), assebleIndices(), "backgroundtile");
-		vaoRef.registerVecUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
-		vaoRef.registerVecUniformEntry("color", color);
-		vaoRef.registerMatUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
+		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
+		vaoRef.registerUniformEntry("color", color);
+		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
 	}
 
 	private List<Float> assembleVertexValues() {

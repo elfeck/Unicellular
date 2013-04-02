@@ -43,8 +43,8 @@ public class Substance {
 			initCluster();
 		}
 		vaoRef = model.addToVao(assembleVertexValues(), assembleIndexData(), "substance");
-		vaoRef.registerVecUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
-		vaoRef.registerMatUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
+		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
+		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
 	}
 
 	private void initCluster() {

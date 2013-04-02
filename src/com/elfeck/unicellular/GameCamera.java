@@ -6,7 +6,8 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHEntity;
-import com.elfeck.ephemeral.math.EPHMat4f;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformMat4f;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec2f;
 import com.elfeck.ephemeral.math.EPHVec2f;
 
 
@@ -14,21 +15,21 @@ public class GameCamera implements EPHEntity {
 
 	private int[] panelBounds; // ingame space
 	private float scale;
-	private EPHMat4f vpMatrix;
-	private EPHVec2f position; // center
+	private EPHUniformMat4f vpMatrix;
+	private EPHUniformVec2f position; // center
 	private EPHVec2f scrollOffset;
 	private GameScrollJob scrollJob;
 
 	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
 		scale = 1f;
-		vpMatrix = new EPHMat4f(new float[][] {
-												{ scale * ((float) panelBounds[3]) / panelBounds[2], 0, 0, 0 },
-												{ 0, scale * ((float) panelBounds[2]) / panelBounds[3], 0, 0 },
-												{ 0, 0, 1, 0 },
-												{ 0, 0, 0, 1 }
+		vpMatrix = new EPHUniformMat4f(new float[][] {
+														{ scale * ((float) panelBounds[3]) / panelBounds[2], 0, 0, 0 },
+														{ 0, scale * ((float) panelBounds[2]) / panelBounds[3], 0, 0 },
+														{ 0, 0, 1, 0 },
+														{ 0, 0, 0, 1 }
 		});
-		position = new EPHVec2f(0, 0);
+		position = new EPHUniformVec2f(0, 0);
 		scrollOffset = new EPHVec2f(0, 0);
 		scrollJob = null;
 	}
@@ -76,11 +77,11 @@ public class GameCamera implements EPHEntity {
 		scrollJob.setSource(position.getX(), position.getY());
 	}
 
-	public EPHMat4f getVpMatrix() {
+	public EPHUniformMat4f getVpMatrix() {
 		return vpMatrix;
 	}
 
-	public EPHVec2f getCameraPosition() {
+	public EPHUniformVec2f getCameraPosition() {
 		return position;
 	}
 
