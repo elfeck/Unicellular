@@ -15,12 +15,14 @@ public class GameSurface extends EPHSurface {
 	private int[] panelBounds; // window space
 	private int[] limitBounds; // ingame space
 	private GameCamera camera;
+	private GameSurfaceLights surfaceLights;
 	private Unicellular main;
 
 	public GameSurface(Unicellular main) {
 		this.main = main;
 		panelBounds = new int[4];
 		limitBounds = new int[] { -2500, -2500, 5000, 5000 };
+		surfaceLights = new GameSurfaceLights();
 		updateBounds();
 		addEntity(camera = new GameCamera(panelBounds));
 		addEntity(new Environment(this));
@@ -63,6 +65,10 @@ public class GameSurface extends EPHSurface {
 
 	public GameCamera getCamera() {
 		return camera;
+	}
+
+	public GameSurfaceLights getSurfaceLights() {
+		return surfaceLights;
 	}
 
 	public int[] getWindowSpacePanelBounds() {

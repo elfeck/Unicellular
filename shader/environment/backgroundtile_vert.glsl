@@ -8,13 +8,18 @@
 in vec4 vertex_position;
 in vec4 vertex_color;
 
+//@insert global_lights.struct
+
 uniform vec2 camera_offset;
 uniform vec4 color;
 uniform mat4 mvp_matrix;
+uniform Global_lights lights[];
 
 out vec4 frag_position;
 out vec4 frag_color;
 out vec4 frag_colorcode;
+
+//@insert global_lights.function
 
 void main() {
 	frag_position = vec4(vertex_position.xy - camera_offset.xy, vertex_position.zw) * mvp_matrix;
