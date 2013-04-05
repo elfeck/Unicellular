@@ -59,6 +59,7 @@ public class Background {
 		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
 		vaoRef.registerUniformEntry("color", color);
 		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
+		surface.getSurfaceLights().register(vaoRef);
 	}
 
 	private List<Float> assembleVertexValues() {
@@ -84,10 +85,6 @@ public class Background {
 
 	protected void delegateLogic(long delta) {
 
-	}
-
-	public float getLayer() {
-		return layer;
 	}
 
 }

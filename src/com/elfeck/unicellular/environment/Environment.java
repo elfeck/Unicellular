@@ -21,8 +21,8 @@ public class Environment implements EPHEntity {
 
 	@Override
 	public void doLogic(long delta) {
-		background.delegateLogic(delta);
-		substance.delegateLogic(delta);
+		// background.delegateLogic(delta);
+		// substance.delegateLogic(delta);
 	}
 
 	@Override

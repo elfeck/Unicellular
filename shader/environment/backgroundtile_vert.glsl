@@ -19,8 +19,6 @@ out vec4 frag_position;
 out vec4 frag_color;
 out vec4 frag_colorcode;
 
-//@insert global_lights.function
-
 void main() {
 	frag_position = vec4(vertex_position.xy - camera_offset.xy, vertex_position.zw) * mvp_matrix;
 	frag_color = color;

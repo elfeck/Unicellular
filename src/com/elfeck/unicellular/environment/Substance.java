@@ -15,7 +15,6 @@ import com.elfeck.unicellular.GameSurface;
 
 public class Substance {
 
-	private float layer;
 	private EPHModel model;
 	private GameSurface surface;
 	private EPHVaoEntry vaoRef;
@@ -23,7 +22,6 @@ public class Substance {
 
 	public Substance(GameSurface surface) {
 		this.surface = surface;
-		layer = 0.3f;
 		model = new EPHModel();
 		clusters = new ArrayList<SubstanceCluster>();
 		initModel();
@@ -39,16 +37,10 @@ public class Substance {
 	}
 
 	private void initQuads() {
-		for (int i = 0; i < 200; i++) {
-			initCluster();
-		}
+		clusters.add(new SubstanceCluster(surface));
 		vaoRef = model.addToVao(assembleVertexValues(), assembleIndexData(), "substance");
 		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
 		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
-	}
-
-	private void initCluster() {
-
 	}
 
 	private List<Float> assembleVertexValues() {
@@ -70,10 +62,6 @@ public class Substance {
 
 	protected void delegateLogic(long delta) {
 
-	}
-
-	public float getLayer() {
-		return layer;
 	}
 
 }
