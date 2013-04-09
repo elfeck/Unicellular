@@ -10,15 +10,17 @@ import java.util.List;
 
 import com.elfeck.ephemeral.drawable.EPHModel;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec1f;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 import com.elfeck.ephemeral.math.EPHVec4f;
 import com.elfeck.unicellular.GameSurface;
 import com.elfeck.unicellular.Util;
+import com.elfeck.unicellular.template.ColoredQuad;
 
 
 public class Background {
 
-	private int tileSize;
+	private int tileSize, tileFactor;
 	private float layer;
 	private EPHModel model;
 	private EPHVaoEntry vaoRef;
@@ -28,7 +30,8 @@ public class Background {
 
 	protected Background(GameSurface surface) {
 		this.surface = surface;
-		tileSize = 100;
+		tileSize = 16;
+		tileFactor = 8;
 		layer = 0.1f;
 		model = new EPHModel();
 		quads = new ArrayList<BackgroundQuad>();
@@ -40,6 +43,7 @@ public class Background {
 	private void initModel() {
 		model.addAttribute(4, "vertex_position");
 		model.addAttribute(4, "vertex_color");
+		model.addAttribute(2, "vertex_center");
 		model.create();
 		model.setViewPort(surface.getWindowSpacePanelBounds());
 		model.addToSurface(surface);
@@ -48,18 +52,25 @@ public class Background {
 	private void initQuads() {
 		int[] bounds = surface.getLimitBounds();
 		float offs;
-		for (int i = bounds[0]; i < bounds[0] + bounds[2]; i += tileSize) {
-			for (int j = bounds[1]; j < bounds[1] + bounds[3]; j += tileSize) {
-				offs = Util.randomFloatInInterval(0, 0.02f) + (Util.testOnProbability(0.5f) ? 0.001f : 0);
+		for (int y = bounds[1]; y < (bounds[1] + bounds[3]); y += tileSize * tileFactor) {
+			for (int x = bounds[0]; x < (bounds[0] + bounds[2]); x += tileSize * tileFactor) {
+				offs = Util.randomFloatInInterval(0, 0.015f) + (Util.testOnProbability(0.5f) ? 0.01f : 0);
+				// offs = 0;
 				EPHVec4f currentColor = new EPHVec4f(offs, offs, offs, 0);
-				quads.add(new BackgroundQuad(i, j, tileSize, tileSize, layer, currentColor));
+				for (int h = 0; h < tileFactor; h++) {
+					for (int w = 0; w < tileFactor; w++) {
+						quads.add(new BackgroundQuad(x + w * tileSize, y + h * tileSize, tileSize, tileSize, layer, currentColor));
+					}
+				}
 			}
 		}
+		System.out.println("Init Quads: [Count = " + quads.size() + "]  [VBO Size: " + quads.size() * 4 * 4 / 1024 + " kB]");
 		vaoRef = model.addToVao(assembleVertexValues(), assebleIndices(), "backgroundtile");
-		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
 		vaoRef.registerUniformEntry("color", color);
-		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
-		surface.getSurfaceLights().register(vaoRef);
+		vaoRef.registerUniformEntry("light_minimum", new EPHUniformVec1f(0.3f));
+		surface.registerCameraAsUniform(vaoRef);
+		surface.registerMvpMatrixAsUniform(vaoRef);
+		surface.registerSurfaceLightsAsUniform(vaoRef);
 	}
 
 	private List<Float> assembleVertexValues() {
@@ -73,12 +84,7 @@ public class Background {
 	private List<Integer> assebleIndices() {
 		List<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < quads.size(); i++) {
-			indices.add(0 + i * 4);
-			indices.add(1 + i * 4);
-			indices.add(2 + i * 4);
-			indices.add(2 + i * 4);
-			indices.add(3 + i * 4);
-			indices.add(0 + i * 4);
+			ColoredQuad.fetchIndices(i * 4, indices);
 		}
 		return indices;
 	}

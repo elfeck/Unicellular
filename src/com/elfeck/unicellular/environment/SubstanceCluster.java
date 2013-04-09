@@ -8,36 +8,52 @@ package com.elfeck.unicellular.environment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elfeck.ephemeral.math.EPHVec4f;
+import com.elfeck.ephemeral.drawable.EPHModel;
+import com.elfeck.ephemeral.glContext.EPHVaoEntry;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 import com.elfeck.unicellular.GameSurface;
+import com.elfeck.unicellular.template.ColoredQuad;
 
 
 public class SubstanceCluster {
 
+	private float layer;
 	private List<SubstanceQuad> quads;
+	private GameSurface surface;
+	private EPHVaoEntry vaoRef;
+	private EPHModel model;
+	private EPHUniformVec4f color;
 
-	protected SubstanceCluster(GameSurface surface) {
+	protected SubstanceCluster(GameSurface surface, EPHModel model, float layer) {
+		this.surface = surface;
+		this.layer = layer;
+		this.model = model;
 		quads = new ArrayList<SubstanceQuad>();
-		quads.add(new SubstanceQuad(-10, -10, 20, 20, 0.2f, new EPHVec4f(1.0f, 0, 0, 1.0f), surface));
+		color = new EPHUniformVec4f(0.8f, 0.8f, layer, 1f);
+		initQuads();
 	}
 
-	protected void fetchVertexData(List<Float> vertexValues) {
+	private void initQuads() {
+
+		vaoRef = model.addToVao(fetchVertexData(), fetchIndexData(), "substance");
+		vaoRef.registerUniformEntry("color", color);
+		surface.registerCameraAsUniform(vaoRef);
+		surface.registerMvpMatrixAsUniform(vaoRef);
+	}
+	private List<Float> fetchVertexData() {
+		List<Float> vertexValues = new ArrayList<Float>();
 		for (SubstanceQuad quad : quads) {
 			quad.fetchVertexData(vertexValues);
 		}
+		return vertexValues;
 	}
 
-	protected int fetchIndexData(List<Integer> indices, int offset) {
+	private List<Integer> fetchIndexData() {
+		List<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < quads.size(); i++) {
-			indices.add(0 + i * 4 + offset);
-			indices.add(1 + i * 4 + offset);
-			indices.add(2 + i * 4 + offset);
-
-			indices.add(2 + i * 4 + offset);
-			indices.add(3 + i * 4 + offset);
-			indices.add(0 + i * 4 + offset);
+			ColoredQuad.fetchIndices(i * 4, indices);
 		}
-		return offset += quads.size() * 4;
+		return indices;
 	}
 
 }

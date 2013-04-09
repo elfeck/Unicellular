@@ -6,14 +6,15 @@
 package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHSurface;
+import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.math.EPHVec2f;
 import com.elfeck.unicellular.environment.Environment;
 
 
 public class GameSurface extends EPHSurface {
 
-	private int[] panelBounds; // window space
-	private int[] limitBounds; // ingame space
+	private int[] panelBounds;
+	private int[] limitBounds;
 	private GameCamera camera;
 	private GameSurfaceLights surfaceLights;
 	private Unicellular main;
@@ -21,7 +22,7 @@ public class GameSurface extends EPHSurface {
 	public GameSurface(Unicellular main) {
 		this.main = main;
 		panelBounds = new int[4];
-		limitBounds = new int[] { -2500, -2500, 5000, 5000 };
+		limitBounds = new int[] { -512, -512, 1024, 1024 };
 		surfaceLights = new GameSurfaceLights();
 		updateBounds();
 		addEntity(camera = new GameCamera(panelBounds));
@@ -59,8 +60,8 @@ public class GameSurface extends EPHSurface {
 	}
 
 	private EPHVec2f toModelSpace(int x, int y) {
-		return new EPHVec2f((x - panelBounds[0] - panelBounds[2] / 2.0f) * (1 / camera.getScale()),
-				(y - panelBounds[1] - panelBounds[3] / 2.0f) * (1 / camera.getScale()));
+		return new EPHVec2f((x - panelBounds[0] - panelBounds[2] / 2.0f) * (1 / camera.getScale()), (y - panelBounds[1] - panelBounds[3] / 2.0f)
+				* (1 / camera.getScale()));
 	}
 
 	public GameCamera getCamera() {
@@ -77,6 +78,18 @@ public class GameSurface extends EPHSurface {
 
 	public int[] getLimitBounds() {
 		return limitBounds;
+	}
+
+	public void registerCameraAsUniform(EPHVaoEntry entry) {
+		entry.registerUniformEntry("camera_offset", camera.getCameraPosition());
+	}
+
+	public void registerMvpMatrixAsUniform(EPHVaoEntry entry) {
+		entry.registerUniformEntry("mvp_matrix", camera.getVpMatrix());
+	}
+
+	public void registerSurfaceLightsAsUniform(EPHVaoEntry entry) {
+		surfaceLights.register(entry);
 	}
 
 }

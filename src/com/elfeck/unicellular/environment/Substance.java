@@ -9,23 +9,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.elfeck.ephemeral.drawable.EPHModel;
-import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.unicellular.GameSurface;
 
 
 public class Substance {
 
+	private float layer;
 	private EPHModel model;
 	private GameSurface surface;
-	private EPHVaoEntry vaoRef;
 	private List<SubstanceCluster> clusters;
 
 	public Substance(GameSurface surface) {
 		this.surface = surface;
+		layer = 0.2f;
 		model = new EPHModel();
 		clusters = new ArrayList<SubstanceCluster>();
 		initModel();
-		initQuads();
+		initClusters();
 	}
 
 	private void initModel() {
@@ -36,28 +36,8 @@ public class Substance {
 		model.addToSurface(surface);
 	}
 
-	private void initQuads() {
-		clusters.add(new SubstanceCluster(surface));
-		vaoRef = model.addToVao(assembleVertexValues(), assembleIndexData(), "substance");
-		vaoRef.registerUniformEntry("camera_offset", surface.getCamera().getCameraPosition());
-		vaoRef.registerUniformEntry("mvp_matrix", surface.getCamera().getVpMatrix());
-	}
-
-	private List<Float> assembleVertexValues() {
-		List<Float> vertexValues = new ArrayList<Float>();
-		for (SubstanceCluster cluster : clusters) {
-			cluster.fetchVertexData(vertexValues);
-		}
-		return vertexValues;
-	}
-
-	private List<Integer> assembleIndexData() {
-		List<Integer> indices = new ArrayList<Integer>();
-		int offset = 0;
-		for (SubstanceCluster cluster : clusters) {
-			offset = cluster.fetchIndexData(indices, offset);
-		}
-		return indices;
+	private void initClusters() {
+		clusters.add(new SubstanceCluster(surface, model, layer));
 	}
 
 	protected void delegateLogic(long delta) {

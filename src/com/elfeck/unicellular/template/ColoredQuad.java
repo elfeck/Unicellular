@@ -53,6 +53,20 @@ public class ColoredQuad implements EPHDisplayable {
 			vertexValues.add(layer);
 			vertexValues.add(1f);
 			color.fetchData(vertexValues);
+			addAdditionalData(vertexValues);
 		}
+	}
+
+	protected void addAdditionalData(List<Float> vertexValues) {
+
+	}
+
+	public static void fetchIndices(int offset, List<Integer> indices) {
+		indices.add(0 + offset);
+		indices.add(1 + offset);
+		indices.add(2 + offset);
+		indices.add(2 + offset);
+		indices.add(3 + offset);
+		indices.add(0 + offset);
 	}
 }

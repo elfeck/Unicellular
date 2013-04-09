@@ -12,14 +12,12 @@ import com.elfeck.ephemeral.glContext.EPHInput;
 public class Unicellular {
 
 	private EPHemeral core;
-	@SuppressWarnings("unused")
-	private GameSurface gameSurface;
 
 	public Unicellular() {
 		core = new EPHemeral(480, 320, "Unicellular");
 		core.setResizable(true);
 		core.setDebug(500, 5000, 40, -1);
-		core.setSurface(gameSurface = new GameSurface(this));
+		core.setSurface(new GameSurface(this));
 	}
 
 	public int getWidth() {

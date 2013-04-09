@@ -6,7 +6,7 @@ speed								[pixel / ms]
 gamePanel: all coordinates			[pixel]
 rect bounds							min{x}, min{y}
 
-
+light								[pixel]
 
 
 useful lighting functions:

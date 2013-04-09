@@ -13,20 +13,24 @@ import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformContent;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformStruct;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformStructArray;
+import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec1f;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 
 
 public class GameSurfaceLights implements EPHLightSource {
 
+	private EPHUniformVec1f activeLights;
 	private EPHUniformStructArray uniformLights;
 
 	public GameSurfaceLights() {
+		activeLights = new EPHUniformVec1f(0);
 		uniformLights = new EPHUniformStructArray();
 	}
 
 	@Override
 	public void register(EPHVaoEntry entry) {
-		entry.registerUniformEntry("global_lights", uniformLights);
+		entry.registerUniformEntry("lights", uniformLights);
+		entry.registerUniformEntry("active_lights", activeLights);
 	}
 
 	public EPHUniformStruct addLightSource(EPHUniformVec4f position, EPHUniformVec4f function) {
@@ -35,10 +39,12 @@ public class GameSurfaceLights implements EPHLightSource {
 		members.put("function", function);
 		EPHUniformStruct struct = new EPHUniformStruct(members);
 		uniformLights.addStruct(struct);
+		activeLights.addToN(0, 1);
 		return struct;
 	}
 
 	public void removeLightSource(EPHUniformStruct struct) {
+		activeLights.addToN(0, -1);
 		uniformLights.removeStruct(struct);
 	}
 

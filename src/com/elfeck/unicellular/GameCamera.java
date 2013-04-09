@@ -23,12 +23,8 @@ public class GameCamera implements EPHEntity {
 	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
 		scale = 1f;
-		vpMatrix = new EPHUniformMat4f(new float[][] {
-														{ scale * ((float) panelBounds[3]) / panelBounds[2], 0, 0, 0 },
-														{ 0, scale * ((float) panelBounds[2]) / panelBounds[3], 0, 0 },
-														{ 0, 0, 1, 0 },
-														{ 0, 0, 0, 1 }
-		});
+		vpMatrix = new EPHUniformMat4f(new float[][] { { scale * 2.0f / panelBounds[2], 0, 0, 0 }, { 0, scale * 2.0f / panelBounds[3], 0, 0 }, { 0, 0, 1, 0 },
+				{ 0, 0, 0, 1 } });
 		position = new EPHUniformVec2f(0, 0);
 		scrollOffset = new EPHVec2f(0, 0);
 		scrollJob = null;
@@ -57,17 +53,11 @@ public class GameCamera implements EPHEntity {
 	}
 
 	public float[] getWindowSpaceBounds() {
-		return new float[] { position.getX() - panelBounds[2] / 2.0f,
-							position.getY() + panelBounds[3] / 2.0f,
-							panelBounds[2], panelBounds[3]
-		};
+		return new float[] { position.getX() - panelBounds[2] / 2.0f, position.getY() + panelBounds[3] / 2.0f, panelBounds[2], panelBounds[3] };
 	}
 
 	public float[] getModelSpaceBounds() {
-		return new float[] { position.getX() - panelBounds[2] / 2.0f,
-							position.getY() - panelBounds[3] / 2.0f,
-							panelBounds[2], panelBounds[3]
-		};
+		return new float[] { position.getX() - panelBounds[2] / 2.0f, position.getY() - panelBounds[3] / 2.0f, panelBounds[2], panelBounds[3] };
 	}
 
 	public void requestScroll(GameScrollJob scrollJob) {
