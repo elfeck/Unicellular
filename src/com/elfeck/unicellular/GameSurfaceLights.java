@@ -14,7 +14,6 @@ import com.elfeck.ephemeral.glContext.uniform.EPHUniformContent;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformStruct;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformStructArray;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec1f;
-import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 
 
 public class GameSurfaceLights implements EPHLightSource {
@@ -22,7 +21,7 @@ public class GameSurfaceLights implements EPHLightSource {
 	private EPHUniformVec1f activeLights;
 	private EPHUniformStructArray uniformLights;
 
-	public GameSurfaceLights() {
+	protected GameSurfaceLights() {
 		activeLights = new EPHUniformVec1f(0);
 		uniformLights = new EPHUniformStructArray();
 	}
@@ -33,19 +32,19 @@ public class GameSurfaceLights implements EPHLightSource {
 		entry.registerUniformEntry("active_lights", activeLights);
 	}
 
-	public EPHUniformStruct addLightSource(EPHUniformVec4f position, EPHUniformVec4f function) {
+	public void addLightSource(GameSurfaceLight light) {
 		Map<String, EPHUniformContent> members = new HashMap<String, EPHUniformContent>();
-		members.put("position", position);
-		members.put("function", function);
+		members.put("position", light.getPositionUniform());
+		members.put("function", light.getFunctionUniform());
 		EPHUniformStruct struct = new EPHUniformStruct(members);
 		uniformLights.addStruct(struct);
 		activeLights.addToN(0, 1);
-		return struct;
+		light.setStruct(struct);
 	}
 
-	public void removeLightSource(EPHUniformStruct struct) {
+	public void removeLightSource(GameSurfaceLight light) {
 		activeLights.addToN(0, -1);
-		uniformLights.removeStruct(struct);
+		uniformLights.removeStruct(light.getStruct());
 	}
 
 }

@@ -18,7 +18,7 @@ public class BackgroundQuad extends ColoredQuad {
 	}
 
 	@Override
-	protected void addAdditionalData(List<Float> vertexValues) {
+	protected void fetchAdditionalData(List<Float> vertexValues) {
 		// center
 		vertexValues.add(position.getX() + width / 2.0f);
 		vertexValues.add(position.getY() + height / 2.0f);

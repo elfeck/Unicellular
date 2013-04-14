@@ -23,8 +23,12 @@ public class GameCamera implements EPHEntity {
 	public GameCamera(int[] panelBounds) {
 		this.panelBounds = panelBounds;
 		scale = 1f;
-		vpMatrix = new EPHUniformMat4f(new float[][] { { scale * 2.0f / panelBounds[2], 0, 0, 0 }, { 0, scale * 2.0f / panelBounds[3], 0, 0 }, { 0, 0, 1, 0 },
-				{ 0, 0, 0, 1 } });
+		vpMatrix = new EPHUniformMat4f(new float[][] {
+														{ scale * 2.0f / panelBounds[2], 0, 0, 0 },
+														{ 0, scale * 2.0f / panelBounds[3], 0, 0 },
+														{ 0, 0, 1, 0 },
+														{ 0, 0, 0, 1 }
+		});
 		position = new EPHUniformVec2f(0, 0);
 		scrollOffset = new EPHVec2f(0, 0);
 		scrollJob = null;

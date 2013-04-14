@@ -7,6 +7,7 @@ package com.elfeck.unicellular;
 
 import com.elfeck.ephemeral.EPHSurface;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
+import com.elfeck.ephemeral.glContext.EPHVao;
 import com.elfeck.ephemeral.math.EPHVec2f;
 import com.elfeck.unicellular.environment.Environment;
 
@@ -64,20 +65,16 @@ public class GameSurface extends EPHSurface {
 				* (1 / camera.getScale()));
 	}
 
-	public GameCamera getCamera() {
-		return camera;
-	}
-
-	public GameSurfaceLights getSurfaceLights() {
-		return surfaceLights;
-	}
-
 	public int[] getWindowSpacePanelBounds() {
 		return panelBounds;
 	}
 
 	public int[] getLimitBounds() {
 		return limitBounds;
+	}
+
+	public void setViewport(EPHVao vao) {
+		vao.setViewportRect(panelBounds);
 	}
 
 	public void registerCameraAsUniform(EPHVaoEntry entry) {
@@ -90,6 +87,10 @@ public class GameSurface extends EPHSurface {
 
 	public void registerSurfaceLightsAsUniform(EPHVaoEntry entry) {
 		surfaceLights.register(entry);
+	}
+
+	public void addLightSource(GameSurfaceLight light) {
+		surfaceLights.addLightSource(light);
 	}
 
 }

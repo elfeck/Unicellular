@@ -7,22 +7,19 @@ package com.elfeck.unicellular.environment;
 
 import com.elfeck.ephemeral.EPHEntity;
 import com.elfeck.unicellular.GameSurface;
+import com.elfeck.unicellular.environment.substance.O2Substance;
 
 
 public class Environment implements EPHEntity {
 
-	private Background background;
-	private Substance substance;
-
 	public Environment(GameSurface surface) {
-		background = new Background(surface);
-		substance = new Substance(surface);
+		surface.addEntity(new Background(surface));
+		surface.addEntity(new O2Substance(surface));
 	}
 
 	@Override
 	public void doLogic(long delta) {
-		background.delegateLogic(delta);
-		substance.delegateLogic(delta);
+
 	}
 
 	@Override

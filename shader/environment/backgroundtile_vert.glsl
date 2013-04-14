@@ -5,9 +5,9 @@
 
 #version 140
 
-//@insert global_light.struct
+//@insert backgroundtile_light.struct
 
-const int max_light_count = 64;
+const int max_light_count = 254;
 const float light_parabolic_block = 0;
 const float light_gaussian_block = 1;
 const float light_para_gauss_block = 2;
@@ -27,7 +27,7 @@ out vec4 frag_light_factor;
 out vec2 frag_model_position;
 
 vec4 compute_light();
-//@insert global_light.decl
+//@insert backgroundtile_light.decl
 
 void main() {
 	vec4 position = vec4(vertex_position.xy - camera_offset.xy, vertex_position.zw) * mvp_matrix;
@@ -50,6 +50,6 @@ vec4 compute_light() {
 	return light_factor;
 }
 
-//@insert global_light.parabolic
-//@insert global_light.gaussian
-//@insert global_light.para_gauss
+//@insert backgroundtile_light.parabolic
+//@insert backgroundtile_light.gaussian
+//@insert backgroundtile_light.para_gauss

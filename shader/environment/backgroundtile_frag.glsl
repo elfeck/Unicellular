@@ -5,9 +5,9 @@
 
 #version 140
 
-//@insert global_light.struct
+//@insert backgroundtile_light.struct
 
-const int max_light_count = 64;
+const int max_light_count = 254;
 const float light_parabolic_pixel = 10;
 const float light_gaussian_pixel = 11;
 const float light_para_gauss_pixel = 12;
@@ -22,7 +22,7 @@ uniform float active_lights;
 uniform float light_minimum;
 
 vec4 compute_light();
-//@insert global_light.decl
+//@insert backgroundtile_light.decl
  
 void main() {
  	gl_FragColor = (frag_colorcode + color) * clamp((frag_light_factor + compute_light()), 0, 1);
@@ -41,6 +41,6 @@ vec4 compute_light() {
 	return light_factor;
 }
 
-//@insert global_light.parabolic
-//@insert global_light.gaussian
-//@insert global_light.para_gauss
+//@insert backgroundtile_light.parabolic
+//@insert backgroundtile_light.gaussian
+//@insert backgroundtile_light.para_gauss

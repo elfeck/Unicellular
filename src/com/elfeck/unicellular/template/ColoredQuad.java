@@ -5,6 +5,7 @@
 
 package com.elfeck.unicellular.template;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.elfeck.ephemeral.drawable.EPHDisplayable;
@@ -15,11 +16,11 @@ import com.elfeck.ephemeral.math.EPHVec4f;
 public class ColoredQuad implements EPHDisplayable {
 
 	protected float layer;
-	protected int width, height;
+	protected float width, height;
 	protected EPHVec2f position;
 	protected EPHVec4f color;
 
-	public ColoredQuad(float x, float y, int width, int height, float layer, EPHVec4f color) {
+	public ColoredQuad(float x, float y, float width, float height, float layer, EPHVec4f color) {
 		this.width = width;
 		this.height = height;
 		position = new EPHVec2f(x, y);
@@ -30,6 +31,26 @@ public class ColoredQuad implements EPHDisplayable {
 	@Override
 	public float getLayer() {
 		return layer;
+	}
+
+	protected void fetchAdditionalData(List<Float> vertexValues) {
+
+	}
+
+	public EPHVec2f getPosition() {
+		return position;
+	}
+
+	public EPHVec2f getCenterPosition() {
+		return position.copy().addVec2f(width / 2.0f, height / 2.0f);
+	}
+
+	public float getWidth() {
+		return width;
+	}
+
+	public float getHeight() {
+		return height;
 	}
 
 	public void fetchVertexData(List<Float> vertexValues) {
@@ -53,12 +74,14 @@ public class ColoredQuad implements EPHDisplayable {
 			vertexValues.add(layer);
 			vertexValues.add(1f);
 			color.fetchData(vertexValues);
-			addAdditionalData(vertexValues);
+			fetchAdditionalData(vertexValues);
 		}
 	}
 
-	protected void addAdditionalData(List<Float> vertexValues) {
-
+	public List<Float> assembleVertexData() {
+		List<Float> vertexValues = new ArrayList<Float>();
+		fetchVertexData(vertexValues);
+		return vertexValues;
 	}
 
 	public static void fetchIndices(int offset, List<Integer> indices) {
@@ -69,4 +92,11 @@ public class ColoredQuad implements EPHDisplayable {
 		indices.add(3 + offset);
 		indices.add(0 + offset);
 	}
+
+	public static List<Integer> assembleIndices() {
+		List<Integer> indices = new ArrayList<Integer>();
+		fetchIndices(0, indices);
+		return indices;
+	}
+
 }
