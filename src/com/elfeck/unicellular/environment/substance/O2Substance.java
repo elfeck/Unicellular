@@ -19,7 +19,7 @@ public class O2Substance implements EPHEntity {
 	private float layer;
 	private EPHVao vao;
 	private EPHVaoEntry entry;
-	private O2SubstanceSourceQuad sourceQuad;
+	private O2SubstanceQuadSource sourceQuad;
 	private GameSurface surface;
 
 	private EPHVec4f baseColor;
@@ -57,7 +57,7 @@ public class O2Substance implements EPHEntity {
 	}
 
 	private void initQuads() {
-		sourceQuad = new O2SubstanceSourceQuad(0, 0, 24, 7, surface, this, entry);
+		sourceQuad = new O2SubstanceQuadSource(0, 0, 24, 7, surface, this, entry);
 		surface.addEntity(sourceQuad);
 	}
 

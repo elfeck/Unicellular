@@ -11,6 +11,7 @@ public class TimeUnitSingle {
 
 	public TimeUnitSingle(int duration) {
 		this.duration = duration;
+		timePassed = duration;
 	}
 
 	public void enterDelta(long delta) {
