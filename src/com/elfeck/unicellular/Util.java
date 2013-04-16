@@ -5,6 +5,9 @@
 
 package com.elfeck.unicellular;
 
+import java.util.List;
+
+
 public class Util {
 
 	private Util() {
@@ -21,6 +24,10 @@ public class Util {
 
 	public static <T> T randomElementFromArray(T[] source) {
 		return source[(int) (Math.random() * source.length)];
+	}
+
+	public static <T> T randomElementFromList(List<T> source) {
+		return source.get((int) (Math.random() * source.size()));
 	}
 
 	public static boolean testOnProbability(float probability) {

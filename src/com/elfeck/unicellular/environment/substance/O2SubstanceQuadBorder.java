@@ -11,38 +11,52 @@ import com.elfeck.unicellular.TimeUnitSingle;
 
 public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 
-	private boolean reappearing;
+	private enum State {
+		NORMAL,
+		VANISHED,
+		REAPPEARING;
+	}
+
+	private State state;
 	private EPHVec2f gridPosition;
 	private TimeUnitSingle timeUnit;
 
 	public O2SubstanceQuadBorder(float x, float y, float size, O2Substance substance) {
 		super(x, y, size, substance);
-		reappearing = false;
 		gridPosition = new EPHVec2f(-1, -1);
 		timeUnit = new TimeUnitSingle(1000);
+		state = State.NORMAL;
 	}
 
 	@Override
 	public void doLogic(long delta) {
-		if (reappearing) {
-			timeUnit.enterDelta(delta);
-			if (timeUnit.passedDuration()) {
-				reappearing = false;
-			}
-			color.setN(3, timeUnit.getFraction());
-			substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+		timeUnit.enterDelta(delta);
+		switch (state) {
+			case NORMAL:
+				break;
+			case VANISHED:
+				if (timeUnit.passedDuration()) reappear();
+				break;
+			case REAPPEARING:
+				if (timeUnit.passedDuration()) state = State.NORMAL;
+				color.setN(3, timeUnit.getFraction());
+				substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+				break;
 		}
 	}
 
-	protected void disappear() {
+	protected void vanish() {
+		timeUnit.setDuration(1000);
+		timeUnit.reset();
 		color.setN(3, 0);
 		substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+		state = State.VANISHED;
 	}
 
-	protected void reappear(int duration) {
-		timeUnit.setDuration(duration);
+	private void reappear() {
+		timeUnit.setDuration(1000);
 		timeUnit.reset();
-		reappearing = true;
+		state = State.REAPPEARING;
 	}
 
 	protected EPHVec2f getGridPosition() {

@@ -39,6 +39,14 @@ public class TimeUnitMulti {
 		timeUnits.get(name).setDuration(duration);
 	}
 
+	public void setTimePassed(String name, int timePassed) {
+		timeUnits.get(name).setTimePassed(timePassed);
+	}
+
+	public void forcePass(String name) {
+		timeUnits.get(name).forcePass();
+	}
+
 	public void reset(String name) {
 		timeUnits.get(name).reset();
 	}

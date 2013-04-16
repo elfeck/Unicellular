@@ -10,7 +10,6 @@ import java.util.List;
 
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
-import com.elfeck.unicellular.GameSurface;
 import com.elfeck.unicellular.GameSurfaceLight;
 import com.elfeck.unicellular.TimeUnitMulti;
 import com.elfeck.unicellular.Util;
@@ -19,22 +18,20 @@ import com.elfeck.unicellular.Util;
 public class O2SubstanceQuadSource extends O2SubstanceQuad {
 
 	private int size, density;
-	private GameSurface surface;
 	private EPHVaoEntry entry;
 	private List<O2SubstanceQuadBorder> borderQuads;
-	private List<O2SubstanceQuad> substanceQuads;
+	private List<O2SubstanceQuadPeriph> substanceQuads;
 	private TimeUnitMulti timeUnit;
 	private GameSurfaceLight light;
 	private EPHUniformVec4f lightPosition, lightFunction;
 
-	public O2SubstanceQuadSource(float x, float y, int size, int density, GameSurface surface, O2Substance substance, EPHVaoEntry entry) {
+	public O2SubstanceQuadSource(float x, float y, int size, int density, O2Substance substance) {
 		super(x, y, size, substance);
 		this.size = size;
 		this.density = density;
-		this.surface = surface;
-		this.entry = entry;
+		this.entry = substance.getVaoEntry();
 		borderQuads = new ArrayList<O2SubstanceQuadBorder>();
-		substanceQuads = new ArrayList<O2SubstanceQuad>();
+		substanceQuads = new ArrayList<O2SubstanceQuadPeriph>();
 		timeUnit = new TimeUnitMulti();
 		light = new GameSurfaceLight(lightPosition = new EPHUniformVec4f(x + size / 2.0f, y + size / 2.0f, 0, 11), lightFunction = new EPHUniformVec4f(40, 0.55f, 0, 0));
 		initTimeUnit();
@@ -43,7 +40,8 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 
 	@Override
 	public void doLogic(long delta) {
-
+		if (timeUnit.passedDuration("test")) spawn();
+		timeUnit.enterDelta(delta);
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 	}
 
 	private void initTimeUnit() {
-
+		timeUnit.addEntry("test", 2000);
 	}
 
 	private void initQuads(int size, int density) {
@@ -75,22 +73,15 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 
 	private void createPeriphQuad(int x, int y) {
 		float quadSize = size / (density - 1.0f);
-		O2SubstanceQuad quad = new O2SubstanceQuadPeriph(position.getX() + quadSize * (x - 1), position.getY() + quadSize * (y - 1), quadSize, substance);
+		O2SubstanceQuadPeriph quad = new O2SubstanceQuadPeriph(position.getX() + quadSize * (x - 1), position.getY() + quadSize * (y - 1), quadSize, substance);
+		quad.setGridPosition(x, y, density);
 		surface.addEntity(quad);
 		substanceQuads.add(quad);
 	}
 
-	private O2SubstanceQuadBorder getBorderQuadAtPposition(int x, int y) {
-		for (O2SubstanceQuadBorder quad : borderQuads) {
-			if (quad.getGridPosition().getX() == x && quad.getGridPosition().getY() == y) return quad;
-		}
-		return null;
-	}
-
-	private void spwan() {
-		int x = Util.randomIntInInterval(0, density + 2);
-		int y = Util.randomIntInInterval(0, density + 2);
-		O2SubstanceQuadBorder spwanQuad = getBorderQuadAtPposition(x, y);
-
+	private void spawn() {
+		O2SubstanceQuadBorder spawnQuad = Util.randomElementFromList(borderQuads);
+		spawnQuad.vanish();
+		createPeriphQuad((int) spawnQuad.getGridPosition().getX(), (int) spawnQuad.getGridPosition().getY());
 	}
 }

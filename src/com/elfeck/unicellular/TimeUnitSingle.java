@@ -27,6 +27,14 @@ public class TimeUnitSingle {
 		this.duration = duration;
 	}
 
+	public void setTimePassed(int timePassed) {
+		this.timePassed = timePassed;
+	}
+
+	public void forcePass() {
+		timePassed = duration;
+	}
+
 	public void reset() {
 		timePassed = 0;
 	}
