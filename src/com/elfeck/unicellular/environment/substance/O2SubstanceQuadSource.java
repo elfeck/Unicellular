@@ -50,7 +50,7 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 	}
 
 	private void initTimeUnit() {
-		timeUnit.addEntry("test", 2000);
+		timeUnit.addEntry("test", 100);
 	}
 
 	private void initQuads(int size, int density) {
@@ -83,5 +83,9 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 		O2SubstanceQuadBorder spawnQuad = Util.randomElementFromList(borderQuads);
 		spawnQuad.vanish();
 		createPeriphQuad((int) spawnQuad.getGridPosition().getX(), (int) spawnQuad.getGridPosition().getY());
+	}
+
+	protected float getSize() {
+		return size;
 	}
 }

@@ -12,7 +12,7 @@ import com.elfeck.unicellular.TimeUnitSingle;
 public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 
 	private enum State {
-		NORMAL,
+		VISIBLE,
 		VANISHED,
 		REAPPEARING;
 	}
@@ -25,24 +25,30 @@ public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 		super(x, y, size, substance);
 		gridPosition = new EPHVec2f(-1, -1);
 		timeUnit = new TimeUnitSingle(1000);
-		state = State.NORMAL;
+		state = State.VISIBLE;
 	}
 
 	@Override
 	public void doLogic(long delta) {
 		timeUnit.enterDelta(delta);
 		switch (state) {
-			case NORMAL:
+			case VISIBLE:
 				break;
 			case VANISHED:
 				if (timeUnit.passedDuration()) reappear();
 				break;
 			case REAPPEARING:
-				if (timeUnit.passedDuration()) state = State.NORMAL;
+				if (timeUnit.passedDuration()) state = State.VISIBLE;
 				color.setN(3, timeUnit.getFraction());
 				substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
 				break;
 		}
+	}
+
+	private void reappear() {
+		timeUnit.setDuration(1000);
+		timeUnit.reset();
+		state = State.REAPPEARING;
 	}
 
 	protected void vanish() {
@@ -51,12 +57,6 @@ public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 		color.setN(3, 0);
 		substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
 		state = State.VANISHED;
-	}
-
-	private void reappear() {
-		timeUnit.setDuration(1000);
-		timeUnit.reset();
-		state = State.REAPPEARING;
 	}
 
 	protected EPHVec2f getGridPosition() {

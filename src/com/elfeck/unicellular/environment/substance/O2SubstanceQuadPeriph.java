@@ -10,25 +10,48 @@ import com.elfeck.ephemeral.math.EPHVec2f;
 
 public class O2SubstanceQuadPeriph extends O2SubstanceQuad {
 
+	private enum State {
+		ROTARY,
+		POSITIONING;
+	}
+
 	private float speed;
 	private EPHVec2f movDirection;
+	private State state;
 
 	public O2SubstanceQuadPeriph(float x, float y, float size, O2Substance substance) {
 		super(x, y, size, substance);
 		movDirection = new EPHVec2f(0, 0);
+		state = State.POSITIONING;
 	}
 
 	@Override
 	public void doLogic(long delta) {
-		position.addVec2f(movDirection.mulScalar(speed));
-		movDirection.mulScalar(1 / speed);
-		substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+		float distScalar = (float) (speed * (delta / 1e6));
+		switch (state) {
+			case POSITIONING:
+				position.addVec2f(movDirection.mulScalar(distScalar));
+				movDirection.mulScalar(1 / distScalar);
+				substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+				checkPosition();
+				break;
+			case ROTARY:
+				break;
+		}
+	}
+
+	private void checkPosition() {
+
 	}
 
 	protected void setGridPosition(int x, int y, int density) {
 		float xDir = x == 0 ? -1 : x == density ? 1 : 0;
 		float yDir = y == 0 ? -1 : y == density ? 1 : 0;
-		movDirection = new EPHVec2f(xDir, yDir);
+		if (xDir == 1 && yDir == 1) yDir = 0;
+		if (xDir == 1 && yDir == -1) xDir = 0;
+		if (xDir == -1 && yDir == -1) yDir = 0;
+		if (xDir == -1 && yDir == 1) xDir = 0;
+		movDirection = new EPHVec2f(xDir, yDir).normalize();
 		speed = 0.01f;
 	}
 

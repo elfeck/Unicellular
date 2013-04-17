@@ -57,7 +57,7 @@ public class O2Substance implements EPHEntity {
 	}
 
 	private void initQuads() {
-		sourceQuad = new O2SubstanceQuadSource(0, 0, 24, 7, this);
+		sourceQuad = new O2SubstanceQuadSource(0, 0, 20, 11, this);
 		surface.addEntity(sourceQuad);
 	}
 
@@ -75,6 +75,10 @@ public class O2Substance implements EPHEntity {
 
 	protected GameSurface getSurface() {
 		return surface;
+	}
+
+	protected O2SubstanceQuadSource getSourceQuad() {
+		return sourceQuad;
 	}
 
 }
