@@ -40,7 +40,7 @@ public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 			case REAPPEARING:
 				if (timeUnit.passedDuration()) state = State.VISIBLE;
 				color.setN(3, timeUnit.getFraction());
-				substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+				updateDataSet();
 				break;
 		}
 	}
@@ -55,7 +55,7 @@ public class O2SubstanceQuadBorder extends O2SubstanceQuad {
 		timeUnit.setDuration(1000);
 		timeUnit.reset();
 		color.setN(3, 0);
-		substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+		updateDataSet();
 		state = State.VANISHED;
 	}
 

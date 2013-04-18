@@ -16,12 +16,13 @@ public class O2SubstanceQuadPeriph extends O2SubstanceQuad {
 	}
 
 	private float speed;
-	private EPHVec2f movDirection;
+	private EPHVec2f movDirection, spawnPosition;
 	private State state;
 
 	public O2SubstanceQuadPeriph(float x, float y, float size, O2Substance substance) {
 		super(x, y, size, substance);
 		movDirection = new EPHVec2f(0, 0);
+		spawnPosition = position.copy();
 		state = State.POSITIONING;
 	}
 
@@ -32,16 +33,12 @@ public class O2SubstanceQuadPeriph extends O2SubstanceQuad {
 			case POSITIONING:
 				position.addVec2f(movDirection.mulScalar(distScalar));
 				movDirection.mulScalar(1 / distScalar);
-				substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
-				checkPosition();
+				updateDataSet();
+				if (position.distance(spawnPosition) > width * 10) state = State.ROTARY;
 				break;
 			case ROTARY:
 				break;
 		}
-	}
-
-	private void checkPosition() {
-
 	}
 
 	protected void setGridPosition(int x, int y, int density) {
@@ -51,7 +48,7 @@ public class O2SubstanceQuadPeriph extends O2SubstanceQuad {
 		if (xDir == 1 && yDir == -1) xDir = 0;
 		if (xDir == -1 && yDir == -1) yDir = 0;
 		if (xDir == -1 && yDir == 1) xDir = 0;
-		movDirection = new EPHVec2f(xDir, yDir).normalize();
+		movDirection = new EPHVec2f(xDir, yDir);
 		speed = 0.01f;
 	}
 

@@ -31,4 +31,8 @@ public abstract class O2SubstanceQuad extends ColoredQuad implements EPHEntity {
 		return dead;
 	}
 
+	protected void updateDataSet() {
+		substance.getVaoEntry().updateVboData(dataSet, assembleVertexData());
+	}
+
 }

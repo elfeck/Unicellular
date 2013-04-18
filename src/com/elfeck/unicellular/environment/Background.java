@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.elfeck.ephemeral.EPHEntity;
+import com.elfeck.ephemeral.glContext.EPHVao;
 import com.elfeck.ephemeral.glContext.EPHVaoBuilder;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.glContext.EPHVaoEntryDataSet;
-import com.elfeck.ephemeral.glContext.EPHVao;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec1f;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 import com.elfeck.ephemeral.math.EPHVec4f;
@@ -67,7 +67,7 @@ public class Background implements EPHEntity {
 	}
 
 	private void initQuads() {
-		int[] bounds = surface.getLimitBounds();
+		int[] bounds = surface.getLimitBounds().toIntArray();
 		float offs;
 		for (int y = bounds[1]; y < (bounds[1] + bounds[3]); y += tileSize * tileFactor) {
 			for (int x = bounds[0]; x < (bounds[0] + bounds[2]); x += tileSize * tileFactor) {

@@ -8,24 +8,25 @@ package com.elfeck.unicellular;
 import com.elfeck.ephemeral.EPHEntity;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformMat4f;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec2f;
+import com.elfeck.ephemeral.math.EPHRect2i;
 import com.elfeck.ephemeral.math.EPHVec2f;
 
 
 public class GameCamera implements EPHEntity {
 
-	private int[] panelBounds; // ingame space
+	private EPHRect2i panelRect; // ingame space
 	private float scale;
 	private EPHUniformMat4f vpMatrix;
 	private EPHUniformVec2f position; // center
 	private EPHVec2f scrollOffset;
 	private GameScrollJob scrollJob;
 
-	public GameCamera(int[] panelBounds) {
-		this.panelBounds = panelBounds;
+	public GameCamera(EPHRect2i panelRect) {
+		this.panelRect = panelRect;
 		scale = 1f;
 		vpMatrix = new EPHUniformMat4f(new float[][] {
-														{ scale * 2.0f / panelBounds[2], 0, 0, 0 },
-														{ 0, scale * 2.0f / panelBounds[3], 0, 0 },
+														{ scale * 2.0f / panelRect.getWidth(), 0, 0, 0 },
+														{ 0, scale * 2.0f / panelRect.getHeight(), 0, 0 },
 														{ 0, 0, 1, 0 },
 														{ 0, 0, 0, 1 }
 		});
@@ -47,8 +48,8 @@ public class GameCamera implements EPHEntity {
 		}
 		// 2.0f to the scale is necessary b/c the vpMatrix translates window ->
 		// [0; 1] and not window -> [-1; -1] aka half the width and height
-		vpMatrix.copyToCL(0, 0, scale * 2.0f / panelBounds[2]);
-		vpMatrix.copyToCL(1, 1, scale * 2.0f / panelBounds[3]);
+		vpMatrix.copyToCL(0, 0, scale * 2.0f / panelRect.getWidth());
+		vpMatrix.copyToCL(1, 1, scale * 2.0f / panelRect.getHeight());
 	}
 
 	@Override
@@ -57,11 +58,11 @@ public class GameCamera implements EPHEntity {
 	}
 
 	public float[] getWindowSpaceBounds() {
-		return new float[] { position.getX() - panelBounds[2] / 2.0f, position.getY() + panelBounds[3] / 2.0f, panelBounds[2], panelBounds[3] };
+		return new float[] { position.getX() - panelRect.getWidth() / 2.0f, position.getY() + panelRect.getHeight() / 2.0f, panelRect.getWidth(), panelRect.getHeight() };
 	}
 
 	public float[] getModelSpaceBounds() {
-		return new float[] { position.getX() - panelBounds[2] / 2.0f, position.getY() - panelBounds[3] / 2.0f, panelBounds[2], panelBounds[3] };
+		return new float[] { position.getX() - panelRect.getWidth() / 2.0f, position.getY() - panelRect.getHeight() / 2.0f, panelRect.getWidth(), panelRect.getHeight() };
 	}
 
 	public void requestScroll(GameScrollJob scrollJob) {
