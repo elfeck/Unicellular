@@ -8,9 +8,10 @@ package com.elfeck.unicellular;
 import com.elfeck.ephemeral.EPHSurface;
 import com.elfeck.ephemeral.glContext.EPHVao;
 import com.elfeck.ephemeral.glContext.EPHVaoEntry;
-import com.elfeck.ephemeral.math.EPHRect2i;
 import com.elfeck.ephemeral.math.EPHVec2f;
+import com.elfeck.ephemeral.math.geom.EPHRect2i;
 import com.elfeck.unicellular.environment.Environment;
+import com.elfeck.unicellular.feature.MovementLine;
 
 
 public class GameSurface extends EPHSurface {
@@ -51,7 +52,7 @@ public class GameSurface extends EPHSurface {
 		if (panelRect.withinBounds(main.getInput().getMx(), main.getInput().getMy())) {
 			if (main.getInput().isMleftReleased()) {
 				EPHVec2f pos = toModelSpace(main.getInput().getMx(), main.getInput().getMy()).addVec2f(camera.getCameraPosition());
-				camera.requestScroll(new GameScrollJob(pos, 2f));
+				camera.requestScroll(new MovementLine(pos, 2f));
 			}
 		}
 	}

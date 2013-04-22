@@ -16,7 +16,7 @@ public class Unicellular {
 	public Unicellular() {
 		core = new EPHemeral(480, 320, "Unicellular");
 		core.setResizable(true);
-		core.setDebug(500, 5000, 40, -1);
+		core.setDebug(2000, 5000, 40, -1);
 		core.setSurface(new GameSurface(this));
 	}
 

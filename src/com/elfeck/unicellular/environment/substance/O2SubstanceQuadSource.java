@@ -8,20 +8,18 @@ package com.elfeck.unicellular.environment.substance;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elfeck.ephemeral.glContext.EPHVaoEntry;
 import com.elfeck.ephemeral.glContext.uniform.EPHUniformVec4f;
 import com.elfeck.unicellular.GameSurfaceLight;
-import com.elfeck.unicellular.TimeUnitMulti;
+import com.elfeck.unicellular.TimeUnitSingle;
 import com.elfeck.unicellular.Util;
 
 
 public class O2SubstanceQuadSource extends O2SubstanceQuad {
 
-	private int size, density;
-	private EPHVaoEntry entry;
+	private int size, density, spawnRate, maxPeriph;
 	private List<O2SubstanceQuadBorder> borderQuads;
 	private List<O2SubstanceQuadPeriph> substanceQuads;
-	private TimeUnitMulti timeUnit;
+	private TimeUnitSingle timeUnit;
 	private GameSurfaceLight light;
 	private EPHUniformVec4f lightPosition, lightFunction;
 
@@ -29,28 +27,23 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 		super(x, y, size, substance);
 		this.size = size;
 		this.density = density;
-		this.entry = substance.getVaoEntry();
+		maxPeriph = 20;
 		borderQuads = new ArrayList<O2SubstanceQuadBorder>();
 		substanceQuads = new ArrayList<O2SubstanceQuadPeriph>();
-		timeUnit = new TimeUnitMulti();
+		timeUnit = new TimeUnitSingle(spawnRate = 1000);
 		light = new GameSurfaceLight(lightPosition = new EPHUniformVec4f(x + size / 2.0f, y + size / 2.0f, 0, 11), lightFunction = new EPHUniformVec4f(40, 0.55f, 0, 0));
-		initTimeUnit();
 		initQuads(size, density);
 	}
 
 	@Override
 	public void doLogic(long delta) {
-		if (timeUnit.passedDuration("test")) spawn();
 		timeUnit.enterDelta(delta);
+		if (substanceQuads.size() < maxPeriph && timeUnit.passedDuration()) spawn();
 	}
 
 	@Override
 	public boolean isDead() {
 		return false;
-	}
-
-	private void initTimeUnit() {
-		timeUnit.addEntry("test", 100);
 	}
 
 	private void initQuads(int size, int density) {
@@ -74,7 +67,7 @@ public class O2SubstanceQuadSource extends O2SubstanceQuad {
 	private void createPeriphQuad(int x, int y) {
 		float quadSize = size / (density - 1.0f);
 		O2SubstanceQuadPeriph quad = new O2SubstanceQuadPeriph(position.getX() + quadSize * (x - 1), position.getY() + quadSize * (y - 1), quadSize, substance);
-		quad.setGridPosition(x, y, density);
+		quad.setDircetion(x, y, density);
 		surface.addEntity(quad);
 		substanceQuads.add(quad);
 	}

@@ -8,12 +8,11 @@ package com.elfeck.unicellular.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elfeck.ephemeral.drawable.EPHDisplayable;
 import com.elfeck.ephemeral.math.EPHVec2f;
 import com.elfeck.ephemeral.math.EPHVec4f;
 
 
-public class ColoredQuad implements EPHDisplayable {
+public class ColoredQuad {
 
 	protected float layer;
 	protected float width, height;
@@ -26,11 +25,6 @@ public class ColoredQuad implements EPHDisplayable {
 		position = new EPHVec2f(x, y);
 		this.layer = layer;
 		this.color = color;
-	}
-
-	@Override
-	public float getLayer() {
-		return layer;
 	}
 
 	protected void fetchAdditionalData(List<Float> vertexValues) {
